@@ -1,0 +1,17 @@
+[Unit]
+Description=OligoLab 小核酸药物研发平台 (FastAPI)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=aiuser
+Group=aiuser
+WorkingDirectory=/export/projects/sandbox/oligolab
+EnvironmentFile=/export/projects/sandbox/oligolab/.env
+# uvicorn 原生多 worker（比照 complexa-prod 的 --workers 4）
+ExecStart=/export/projects/sandbox/oligolab/.venv/bin/uvicorn app.main:app --app-dir /export/projects/sandbox/oligolab/backend --host 127.0.0.1 --port 7130 --workers 4
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

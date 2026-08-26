@@ -1,0 +1,59 @@
+export interface OligoModule {
+  slug: string
+  name: string
+  status: string
+  summary: string
+  features: string[]
+}
+
+export const MODULES: OligoModule[] = [
+  {
+    slug: 'seq-design',
+    name: '序列与修饰设计',
+    status: '规划中',
+    summary: '核酸序列设计、碱基/骨架/糖环修饰（2\'-OMe、LNA、PS 等）设计工具。',
+    features: ['ASO/siRNA 序列设计', '化学修饰编辑', '修饰模式库', '序列导出'],
+  },
+  {
+    slug: 'off-target',
+    name: '脱靶与靶点预测',
+    status: '规划中',
+    summary: 'siRNA/ASO 脱靶预测、靶点筛选与特异性评估。',
+    features: ['脱靶打分', '靶点特异性评估', '同源比对'],
+  },
+  {
+    slug: 'structure-properties',
+    name: '二级结构与理化性质',
+    status: '规划中',
+    summary: 'MFE/二级结构、Tm、GC、分子量、溶解度、亲疏水等理化性质计算。',
+    features: ['二级结构预测', '热力学参数(MFE)', '理化性质计算'],
+  },
+  {
+    slug: 'stability-immuno',
+    name: '稳定性与免疫原性',
+    status: '规划中',
+    summary: '核酸酶稳定性、半衰期、免疫原性/细胞因子风险预测。',
+    features: ['稳定性预测', '半衰期评估', '免疫原性风险'],
+  },
+  {
+    slug: 'delivery',
+    name: '递送系统设计',
+    status: '规划中',
+    summary: 'LNP / GalNAc / 配体偶联等递送系统设计与评估。',
+    features: ['LNP 配方设计', 'GalNAc 偶联', '递送效率评估'],
+  },
+  {
+    slug: 'project-data',
+    name: '项目与数据管理',
+    status: '规划中',
+    summary: '内部项目、序列、任务管理与实验数据台账。',
+    features: ['项目管理', '序列台账', '任务跟踪'],
+  },
+  {
+    slug: 'literature',
+    name: '文献与知识库',
+    status: '规划中',
+    summary: '小核酸相关文献、专利与内部知识库检索。',
+    features: ['文献检索', '专利导航', '内部知识库'],
+  },
+]

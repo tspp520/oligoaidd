@@ -55,6 +55,7 @@ async def login(req: LoginRequest):
             resp.locked_until = user_info.get("locked_until")
         return resp
 
+    assert user_info is not None  # success 时必有用户信息
     token = create_token(user_info)
     return LoginResponse(success=True, code="LOGIN_SUCCESS", message="Login successful",
                          token=token, user=UserInfo(**user_info))

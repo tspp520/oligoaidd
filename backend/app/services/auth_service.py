@@ -174,14 +174,15 @@ class LDAPAuthenticator:
 
 
 def create_token(user_info: dict) -> str:
-    expire = datetime.utcnow() + timedelta(days=JWT_EXPIRE_DAYS)
+    now = datetime.now(timezone.utc)
+    expire = now + timedelta(days=JWT_EXPIRE_DAYS)
     payload = {
         "sub": user_info["username"],
         "display_name": user_info.get("display_name", ""),
         "department": user_info.get("department", ""),
         "email": user_info.get("email", ""),
-        "exp": expire,
-        "iat": datetime.utcnow(),
+        "exp": expire.timestamp(),
+        "iat": now.timestamp(),
     }
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=JWT_ALGORITHM)
 

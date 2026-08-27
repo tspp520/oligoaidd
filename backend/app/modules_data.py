@@ -20,7 +20,7 @@ MODULES = [
     {"slug": "project-data", "name": "项目与数据管理", "status": "规划中",
      "summary": "内部项目、序列、任务管理与实验数据台账。",
      "features": ["项目管理", "序列台账", "任务跟踪"]},
-    {"slug": "literature", "name": "文献与知识库", "status": "规划中",
-     "summary": "小核酸相关文献、专利与内部知识库检索。",
-     "features": ["文献检索", "专利导航", "内部知识库"]},
+    {"slug": "literature", "name": "文献与知识库", "status": "已上线 · 文档库",
+     "summary": "小核酸药物内部 Markdown 知识文档库（侧边栏栏目 + 右侧渲染）。",
+     "features": ["小核酸药物概述", "ASO/siRNA/mRNA 简介", "化学修饰与递送", "内网知识文档"]},
 ]

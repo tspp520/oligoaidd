@@ -13,6 +13,9 @@
 
 ## 1. 需要 root 的步骤
 
+> ⚠️ **文献与知识库（literature）模块**上线后，若改了后端路由/模块状态，需
+> `sudo systemctl restart oligolab` 使 `/api/literature/*`、`/literature/assets`、模块状态生效（前端 build 已随静态托管即时生效）。
+
 > ✅ 已在 `k8s-master02` 执行完毕：systemd 注册 + 启用、nginx `/offtarget/` 生效、`systemctl restart oligolab` 均完成。
 > 期间修掉一个 systemd 启动 bug（见 pitfalls #13：run_prod.sh 需 `cd` 到 service 目录）。
 > 以下命令仅作备份/复现用。**注意：须在 `/export/projects/sandbox/oligolab` 目录下执行**（相对路径），

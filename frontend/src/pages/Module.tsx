@@ -1,10 +1,13 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { MODULES } from '../data/modules'
+import Literature from './Literature'
 
 export default function Module() {
   const { slug } = useParams()
   const m = MODULES.find((x) => x.slug === slug)
   if (!m) return <Navigate to="/" replace />
+  // 文献与知识库：直接渲染 Markdown 文档库（左侧文档栏目 + 右侧渲染）
+  if (slug === 'literature') return <Literature />
   return (
     <div style={{ minHeight: '100vh', padding: '48px 56px', maxWidth: 880, margin: '0 auto' }}>
       <a href="/" style={{ color: '#2563eb' }}>

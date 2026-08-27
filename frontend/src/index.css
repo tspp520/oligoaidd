@@ -13,3 +13,92 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+/* --- Markdown 文档渲染样式（文献与知识库） --- */
+article h1 {
+  font-size: 24px;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+article h2 {
+  font-size: 19px;
+  margin: 24px 0 10px;
+}
+article h3 {
+  font-size: 16px;
+  margin: 20px 0 8px;
+}
+article p {
+  margin: 10px 0;
+}
+article ul,
+article ol {
+  padding-left: 26px;
+  margin: 10px 0;
+}
+article li {
+  margin: 4px 0;
+}
+article table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 14px 0;
+  font-size: 14px;
+}
+article th,
+article td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+article th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+article tr:nth-child(even) td {
+  background: #fafbfd;
+}
+article code {
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+  overflow: auto;
+  margin: 12px 0;
+}
+article pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+article blockquote {
+  border-left: 4px solid #2563eb;
+  background: #eff6ff;
+  margin: 12px 0;
+  padding: 10px 16px;
+  color: #475569;
+  border-radius: 0 8px 8px 0;
+}
+article img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 12px 0;
+  border: 1px solid #e5e7eb;
+}
+article hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 24px 0;
+}
+article a {
+  color: #2563eb;
+  text-decoration: underline;
+}

@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     LDAP_BASE_DN: str = "DC=shangpharma,DC=com"
     LDAP_DOMAINS: str = "CP.shangpharma.com,CD-GW.shangpharma.com,CE.shangpharma.com"
 
+    # 文献与知识库：md 文档主目录（每个文档一个同名子文件夹）
+    LITERATURE_DOCS_DIR: str = "./backend/literature_docs"
+
     # Auth
     JWT_SECRET: str = "change-me-in-production"
     AUTH_ENABLED: bool = True

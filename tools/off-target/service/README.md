@@ -34,4 +34,9 @@ RUNSLOW=1 /home/aiuser/.conda/envs/oligorunner/bin/python -m pytest test_runner.
 - `POST /api/predict` → `{job_id}`  （body: sequence/name/with_off_target/with_toxicity/no_func/top_n）
 - `GET /api/jobs` / `GET /api/jobs/{id}` → 结果（result: 按 efficacy 排序的 siRNA 行）
 
+## UI：示例序列自动补全
+mRNA 输入框下方有「从示例自动补全」输入框（`list="mrnaExamples"` datalist）。
+输入与四个内置示例序列任意匹配（忽略大小写/T）时即时回填到上方 mRNA 输入框；点选/Tab/回车选中也会填入。
+这样"占位提示语"(placeholder)可一键实体化为真实序列。
+
 详见 `docs/technical/2026-08-26-ooftarget-design.md`。

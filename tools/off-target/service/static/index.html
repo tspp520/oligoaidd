@@ -48,6 +48,14 @@
   <div class="card">
     <label for="seq">靶标 mRNA 序列（≥19 nt，仅 ACGU / 自动把 T 转 U）</label>
     <textarea id="seq" placeholder="例如：AUGCUAGCUAGCUAGCUAGCUAGCU..."></textarea>
+    <label for="seqPick" style="margin-top:10px;">从示例自动补全（输入或点选，回车填入上方）</label>
+    <input type="text" id="seqPick" list="mrnaExamples" placeholder="例如：AUGCUA... （Tab/回车/点选）">
+    <datalist id="mrnaExamples">
+      <option value="GGUUCAAUUUAAUUUGCGAAAGAGACCUUACGGACGUGGGCGCCAGUGGACCUCCUC">示例 1 · 38nt
+      <option value="ACUAUAGGUUCAAUUUAAUGUGCGAAAGAGACCUUACGGACGUGGGCGCCAGUGGAC">示例 2 · 45nt
+      <option value="AUGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUAGCUA">示例 3 · 重复基序 · 55nt
+      <option value="GGGAAACCCUUUAGGGAAACCCUUUAGGGAAACCCUUUAGGGAAACCCUUUAGG">示例 4 · GC 富集 · 48nt
+    </datalist>
     <div class="row">
       <div class="field"><label for="name">任务名称</label><input type="text" id="name" value="RNA" placeholder="RNA"></div>
     </div>
@@ -171,6 +179,29 @@ async function viewJob(id) {
 
 document.getElementById('runBtn').addEventListener('click', submit);
 document.getElementById('refreshBtn').addEventListener('click', refreshJobs);
+
+// —— 示例序列自动补全（方案 B）：从 datalist 选中/回车后，填入上方的 mRNA 输入框 ——
+const seqPick = document.getElementById('seqPick');
+const seqBox = document.getElementById('seq');
+const mrnaExamples = document.getElementById('mrnaExamples');
+seqPick.addEventListener('change', () => {
+  const v = seqPick.value.trim();
+  if (!v) return;
+  seqBox.value = v.toUpperCase().replace(/T/g, 'U');   // 实体化并统一 U
+  seqBox.focus();
+  seqPick.value = '';
+});
+// 输入时若命中示例（忽略大小写），也即时回填（Tab/回车触发 value 变化）
+seqPick.addEventListener('input', () => {
+  const v = seqPick.value.trim().toUpperCase().replace(/T/g, 'U');
+  for (const opt of mrnaExamples.options) {
+    if (opt.value.toUpperCase() === v) {
+      seqBox.value = v;                                  // 命中 → 实体化到主框
+      break;
+    }
+  }
+});
+
 refreshJobs();
 </script>
 </body>

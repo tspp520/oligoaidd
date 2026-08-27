@@ -125,7 +125,10 @@ CREATE TABLE login_lockouts (
 | `/module/:slug` | Module | 模块介绍页（新标签页，需登录） |
 
 ### 5.2 7 个模块
-序/脱靶与靶点/二级结构与理化性质/稳定性与免疫原性/递送系统/项目与数据管理/文献与知识库 —— 当前均为"规划中"介绍页，后续逐个接真实功能。
+序/脱靶与靶点/二级结构与理化性质/稳定性与免疫原性/递送系统/项目与数据管理/文献与知识库。
+其中 **脱靶与靶点预测（off-target）** 已接入真实功能（OligoFormer 内网 SaaS，挂载于 `/offtarget/`），
+其余仍为"规划中"介绍页。off-target 详细设计/部署/踩坑见：
+`docs/technical/2026-08-26-ooftarget-{design,deployment,pitfalls}.md`。
 
 ## 6. 部署
 

@@ -27,3 +27,13 @@ cd frontend && npm install && npm run build
 ./backend/run_prod.sh      # gunicorn 多 worker，端口 7130
 ```
 详见 `docs/superpowers/specs/2026-08-26-oligolab-saas-design.md` 设计文档。
+
+## 模块：脱靶与靶点预测（off-target）✅ 已上线（内网验证版）
+
+基于 [OligoFormer](https://github.com/lulab/OligoFormer)（清华 lulab，transformer + RNA-FM）搭建的
+独立内网 SaaS，提供 **siRNA 功效预测 / 脱靶(PITA+TargetScan) / 毒性筛选**，挂载在
+`https://oligolab.chempartner.com/offtarget/`（服务端口 `127.0.0.1:7131`）。
+
+- 代码：`tools/off-target/`（含 OligoFormer 源码、PerlLib、独立 SaaS 服务）
+- 文档：`docs/technical/2026-08-26-ooftarget-design.md`（设计）、`...-deployment.md`（部署）、`...-pitfalls.md`（踩坑）
+- ⚠️ 授权：OligoFormer 学术/非商业免费，**商业使用需清华授权**。

@@ -42,9 +42,31 @@ export default function Module() {
             <li key={f}>{f}</li>
           ))}
         </ul>
-        <p style={{ marginTop: 24, color: '#9ca3af', fontSize: 13 }}>
-          当前为占位页面，具体功能开发中，敬请期待。
-        </p>
+        {m.url ? (
+          <>
+            <a
+              href={m.url}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'inline-block',
+                marginTop: 24,
+                padding: '10px 22px',
+                background: '#2563eb',
+                color: '#fff',
+                borderRadius: 8,
+                textDecoration: 'none',
+                fontWeight: 600,
+              }}
+            >
+              打开工具（新标签页）
+            </a>
+          </>
+        ) : (
+          <p style={{ marginTop: 24, color: '#9ca3af', fontSize: 13 }}>
+            当前为占位页面，具体功能开发中，敬请期待。
+          </p>
+        )}
       </div>
     </div>
   )

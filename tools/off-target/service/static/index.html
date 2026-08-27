@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OligoFormer · siRNA 设计预测</title>
+<style>
+  :root{ --primary:#2563eb; --bg:#f4f6fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --ok:#16a34a; --err:#dc2626; --running:#d97706;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);}
+  .wrap{max-width:1000px;margin:0 auto;padding:24px 16px 60px;}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  header h1{font-size:22px;margin:0;}
+  header .tag{font-size:12px;color:var(--muted);background:#eef1f7;padding:3px 8px;border-radius:999px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 20px;}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);padding:20px;margin-bottom:16px;}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  textarea{width:100%;min-height:120px;border:1px solid #d1d5db;border-radius:8px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;resize:vertical;}
+  input[type=text]{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:13px;}
+  .row{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;}
+  .row .field{flex:1;min-width:160px;}
+  .check{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;}
+  .check input{width:auto;}
+  .btn{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;cursor:pointer;margin-top:16px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn.sec{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:8px 10px;border-bottom:1px solid #eef0f4;text-align:left;}
+  th{background:#f8fafc;font-weight:600;position:sticky;top:0;}
+  tr:hover td{background:#fafbfd;}
+  .num{font-variant-numeric:tabular-nums;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;}
+  .b-ok{background:#dcfce7;color:var(--ok);}.b-err{background:#fee2e2;color:var(--err);}.b-run{background:#fef3c7;color:var(--running);}.b-idle{background:#eef1f7;color:var(--muted);}
+  .status-bar{margin:16px 0 8px;}
+  .err-box{background:#fef2f2;border:1px solid #fecaca;color:var(--err);border-radius:8px;padding:12px;font-size:13px;white-space:pre-wrap;}
+  .muted{color:var(--muted);font-size:12px;}
+  .empty{color:var(--muted);text-align:center;padding:30px 0;}
+  .jobs{display:block;font-size:12px;color:var(--muted);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🧬 OligoFormer <span class="tag">siRNA 设计与脱靶预测</span></h1>
+  </header>
+  <p class="sub">基于 transformer 的 siRNA 功效预测（Tsinghua lulab）· 内网验证版</p>
+
+  <div class="card">
+    <label for="seq">靶标 mRNA 序列（≥19 nt，仅 ACGU / 自动把 T 转 U）</label>
+    <textarea id="seq" placeholder="例如：AUGCUAGCUAGCUAGCUAGCUAGCU..."></textarea>
+    <div class="row">
+      <div class="field"><label for="name">任务名称</label><input type="text" id="name" value="RNA" placeholder="RNA"></div>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="off"><label for="off" style="margin:0;font-weight:400;">脱靶预测（较慢，需 perl/ViennaRNA）</label>
+      <span style="width:20px"></span>
+      <input type="checkbox" id="tox"><label for="tox" style="margin:0;font-weight:400;">毒性筛选</label>
+    </div>
+    <button class="btn" id="runBtn">开始预测</button>
+    <div class="jobs" id="curJob"></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <label style="margin:0;">最近任务</label>
+      <button class="btn sec" id="refreshBtn">刷新</button>
+    </div>
+    <div id="jobsList"></div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <label>预测结果</label>
+    <div id="resultErr"></div>
+    <div style="overflow:auto;max-height:520px;">
+      <table id="resultTable"><thead></thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+// api 帮助函数：支持挂在平台子路径 /offtarget/ 下，也支持独立端口根路径。
+const BASE = (() => {
+  const p = location.pathname;
+  const i = p.indexOf('/offtarget/');
+  return i > 0 ? p.slice(0, i + '/offtarget/'.length) : (p.endsWith('/') ? p : p + '/');
+})();
+const api = (path, opts) => fetch(BASE + path.replace(/^\//, ''), opts).then(r => r.json());
+let pollTimer = null;
+
+async function submit() {
+  const seq = document.getElementById('seq').value.trim();
+  const name = document.getElementById('name').value.trim() || 'RNA';
+  const with_off_target = document.getElementById('off').checked;
+  const with_toxicity = document.getElementById('tox').checked;
+  if (seq.length < 19) { alert('请输入 ≥19 nt 的 mRNA 序列'); return; }
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  const top_n = -1;
+  try {
+    const res = await api('/api/predict', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({sequence: seq, name, with_off_target, with_toxicity, top_n})
+    });
+    document.getElementById('curJob').textContent = '已提交任务：' + res.job_id;
+    document.getElementById('resultCard').style.display = 'none';
+    startPoll(res.job_id);
+  } catch(e) { document.getElementById('curJob').textContent = '提交失败：' + e; }
+  btn.disabled = false;
+}
+
+function startPoll(jobId) {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const j = await api('/api/jobs/' + jobId);
+      renderJob(j);
+      if (j.status === 'done' || j.status === 'error') { clearInterval(pollTimer); pollTimer = null; }
+    } catch(e) {}
+  }, 3000);
+}
+
+function renderJob(j) {
+  const div = document.getElementById('curJob');
+  const cls = j.status==='done'?'b-ok':j.status==='error'?'b-err':j.status==='running'?'b-run':'b-idle';
+  div.innerHTML = `任务 ${j.id} <span class="badge ${cls}">${j.status}</span>`;
+  if (j.status === 'done') renderResult(j);
+  if (j.status === 'error') {
+    const card = document.getElementById('resultCard');
+    card.style.display = 'block';
+    document.getElementById('resultErr').innerHTML = `<div class="err-box">推理失败：${j.error || '未知错误'}</div>`;
+  }
+  refreshJobs();
+}
+
+function renderResult(j) {
+  const rows = j.result || [];
+  const card = document.getElementById('resultCard');
+  card.style.display = 'block';
+  document.getElementById('resultErr').innerHTML = '';
+  if (!rows.length) {
+    document.getElementById('resultTable').innerHTML = '<div class="empty">暂无结果</div>';
+    return;
+  }
+  const cols = Object.keys(rows[0]);
+  const thead = document.getElementById('resultTable').querySelector('thead');
+  const tbody = document.getElementById('resultTable').querySelector('tbody');
+  thead.innerHTML = '<tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
+  tbody.innerHTML = rows.map(r => '<tr>' + cols.map(c=>`<td class="num">${r[c] ?? ''}</td>`).join('') + '</tr>').join('');
+}
+
+async function refreshJobs() {
+  const jobs = await api('/api/jobs');
+  const wrap = document.getElementById('jobsList');
+  const max = jobs.sort((a,b)=>b.created_at.localeCompare(a.created_at)).slice(0,8);
+  if (!max.length) { wrap.innerHTML = '<div class="empty">暂无任务</div>'; return; }
+  wrap.innerHTML = '<table><thead><tr><th>ID</th><th>名称</th><th>时间</th><th>状态</th><th>siRNA数</th></tr></thead><tbody>' +
+    max.map(j=>{
+      const cls = j.status==='done'?'b-ok':j.status==='error'?'b-err':j.status==='running'?'b-run':'b-idle';
+      return `<tr style="cursor:pointer" onclick="viewJob('${j.id}')">
+        <td class="num">${j.id.slice(0,8)}</td><td>${j.name||'-'}</td>
+        <td class="num">${(j.created_at||'').slice(5,19)}</td>
+        <td><span class="badge ${cls}">${j.status}</span></td>
+        <td class="num">${j.summary?.siRNA_count ?? '-'}</td></tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+async function viewJob(id) {
+  const j = await api('/api/jobs/'+id);
+  if (j.status === 'done') { clearInterval(pollTimer); renderResult(j); }
+}
+
+document.getElementById('runBtn').addEventListener('click', submit);
+document.getElementById('refreshBtn').addEventListener('click', refreshJobs);
+refreshJobs();
+</script>
+</body>
+</html>

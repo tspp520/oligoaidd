@@ -11,3 +11,5 @@ frontend/*.tsbuildinfo
 logs/
 *.log
 .DS_Store
+# OligoFormer 上游源码 + 大权重（1.2GB RNA-FM），不纳入 git；按 setup_offtarget.sh 重建
+tools/off-target/OligoFormer/

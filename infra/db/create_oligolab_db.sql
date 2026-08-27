@@ -4,5 +4,5 @@
 --   psql -h 127.0.0.1 -p 5434 -U postgres -f infra/db/create_oligolab_db.sql
 -- 之后把该密码填入 /export/projects/sandbox/oligolab/.env 的 OLIGOLAB_PG_PASSWORD
 
-CREATE ROLE oligolab LOGIN PASSWORD 'change-me' CONNECTION LIMIT 20;
+CREATE ROLE oligolab LOGIN PASSWORD 'Oligo_c9U4HlWi5ZLq3D@7130' CONNECTION LIMIT 20;
 CREATE DATABASE oligolab OWNER oligolab;

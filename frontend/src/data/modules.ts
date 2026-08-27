@@ -4,6 +4,8 @@ export interface OligoModule {
   status: string
   summary: string
   features: string[]
+  /** 可选：模块若有已上线工具，给出在平台域名下的访问路径（新标签页打开） */
+  url?: string
 }
 
 export const MODULES: OligoModule[] = [
@@ -17,9 +19,10 @@ export const MODULES: OligoModule[] = [
   {
     slug: 'off-target',
     name: '脱靶与靶点预测',
-    status: '规划中',
-    summary: 'siRNA/ASO 脱靶预测、靶点筛选与特异性评估。',
-    features: ['脱靶打分', '靶点特异性评估', '同源比对'],
+    status: '建设中 · 验证中',
+    summary: 'siRNA/ASO 脱靶预测、靶点筛选与特异性评估（OligoFormer）。',
+    features: ['siRNA 功效预测', '脱靶打分(PITA/TargetScan)', '毒性筛选', '靶点特异性评估'],
+    url: '/offtarget/',
   },
   {
     slug: 'structure-properties',

@@ -1,0 +1,20 @@
+# OligoFormer off-target 内网 SaaS —— systemd 单元
+# 部署：cp infra/systemd/oligoformer-offtarget.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable --now oligoformer-offtarget
+[Unit]
+Description=OligoFormer Off-target SaaS (siRNA efficacy/off-target/toxicity)
+After=network.target
+
+[Service]
+Type=simple
+User=aiuser
+Group=aiuser
+Environment=OFFTARGET_PORT=7131
+Environment=OLIGORUNNER_PYTHON=/home/aiuser/.conda/envs/oligorunner/bin/python
+ExecStart=/export/projects/sandbox/oligolab/tools/off-target/service/run_prod.sh
+Restart=always
+RestartSec=5
+# 推理是重型 GPU 任务，串行单例
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

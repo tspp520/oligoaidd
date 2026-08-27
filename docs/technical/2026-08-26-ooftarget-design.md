@@ -60,6 +60,21 @@ tools/off-target/
 ├── setup_offtarget.sh               # 一次性初始化（perl/pita/参考序列/RNAfold 校验）
 ```
 
+## 3.1 模型与数据下载（不纳入 git，需自行获取）
+
+> **重要**：`OligoFormer/` 上游源码连同 **RNA-FM 预训练权重（~1.2GB）** 等大文件**不入库**（见 `.gitignore`）。
+> 部署机器按 `setup_offtarget.sh` + 下面链接获取。所有链接均来自上游 README / 清华云。
+
+| 资源 | 大小 | 下载链接 | 落盘位置 |
+|---|---|---|---|
+| RNA-FM 打包包（含 `RNA-FM_pretrained.pth`） | ~1.2GB | `https://cloud.tsinghua.edu.cn/f/46d71884ee8848b3a958/?dl=1`（存为 `RNA-FM.tar.gz` 后解压） | `OligoFormer/RNA-FM/redevelop/pretrained/RNA-FM_pretrained.pth` |
+| PerlLib（perl 模块：Bio/TreeIO、Statistics/Lite） | ~2.4MB | `https://cloud.tsinghua.edu.cn/f/cab2afdf951140a48fec/?dl=1`（存为 `PerlLib.zip` 后解压到 `tools/off-target/PerlLib`） | `tools/off-target/PerlLib/` |
+| OligoFormer `best_model.pth` / `mismatch_model.pth` | 5.8MB / 78KB | **git 自带**（`OligoFormer/model/`，随上游仓库 clone 即得，无需下载） | `OligoFormer/model/` |
+| 人类 UTR/ORF 参考序列（用于脱靶全人类扫描） | 42/48MB（zip） | **git 自带**（`OligoFormer/off-target/ref/*.zip`，`setup` 时解压） | `OligoFormer/off-target/ref/` |
+
+- RNA-FM 也可从上游备用源（GitHub `ml4bio/RNA-FM` + Google Drive `1VGye74GnNXbUMKx6QYYectZrY7G2pQ_J`）获取，内网优先用清华云。
+- 上述链接与命令在 `setup_offtarget.sh` 中已引用；PITA/ViennaRNA-1.6 二进制随上游仓库提供。
+
 ## 4. 模块能力与接口
 
 ### 4.1 推理能力矩阵

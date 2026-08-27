@@ -7,8 +7,12 @@
 
 | 类别 | 内容 | 位置 |
 |---|---|---|
-| 预训练权重 | RNA-FM 1.2GB + OligoFormer best_model.pth | `tools/off-target/OligoFormer/` |
+| 预训练权重 | RNA-FM 1.2GB + OligoFormer best_model.pth（**不入库，见下"下载"**） | `tools/off-target/OligoFormer/` |
 | 推理环境 | `oligorunner` conda（Python3.10 + torch 2.5.1 cu124 + H20） | ~/.conda/envs/oligorunner |
+
+> **权重下载**（大文件不入库）：RNA-FM `https://cloud.tsinghua.edu.cn/f/46d71884ee8848b3a958/?dl=1`
+> （→`RNA-FM.tar.gz`→解压）；PerlLib `https://cloud.tsinghua.edu.cn/f/cab2afdf951140a48fec/?dl=1`。
+> 详见 `docs/technical/2026-08-26-ooftarget-design.md` §3.1。
 | 独立 SaaS | FastAPI + 单页 UI，端口 7131 | `tools/off-target/service/` |
 | 单元测试 | 4 项通过 + 1 项重型（默认跳过） | `tools/off-target/service/test_runner.py` |
 | 初始化脚本 | perl/pita/参考序列/RNAfold | `tools/off-target/setup_offtarget.sh` |
